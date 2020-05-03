@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/dogmatiq/dogmavet/internal/dogmatypes"
-	"github.com/dogmatiq/dogmavet/internal/report"
+	"github.com/dogmatiq/dogmavet/internal/testhelper"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/ctrlflow"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -27,7 +27,7 @@ var Analyzer = &analysis.Analyzer{
 func run(pass *analysis.Pass) (interface{}, error) {
 	in := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-	if report.Ignore(pass) {
+	if testhelper.Ignore(pass) {
 		return nil, nil
 	}
 
