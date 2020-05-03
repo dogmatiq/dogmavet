@@ -12,6 +12,7 @@ run: artifacts/build/debug/$(GOHOSTOS)/$(GOHOSTARCH)/dogma
 	$< $(RUN_ARGS)
 
 .makefiles/%:
+	go mod download
 	@curl -sfL https://makefiles.dev/v1 | bash /dev/stdin "$@"
 
 artifacts/analysistest/gopath/src/%: $$(shell go list -f {{.Dir}} -m $$*)
