@@ -3,31 +3,33 @@ package configure
 import (
 	"go/ast"
 	"go/constant"
+	"go/types"
 	"strconv"
 
 	"github.com/dogmatiq/configkit"
 	"github.com/dogmatiq/dogmavet/internal/report"
 	"github.com/google/uuid"
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/passes/ctrlflow"
-	"golang.org/x/tools/go/ast/astutil"
-	"golang.org/x/tools/go/cfg"
+	"golang.org/x/tools/go/ssa"
 )
 
+// checkIdentity checks that a Configure() method uses the configurer's
+// Identity() method correctly.
 func checkIdentity(
 	pass *analysis.Pass,
 	decl *ast.FuncDecl,
-	param *ast.Ident,
+	pkg *ssa.Package,
 ) {
-	cfgs := pass.ResultOf[ctrlflow.Analyzer].(*ctrlflow.CFGs)
-	graph := cfgs.FuncDecl(decl)
+	obj := pass.TypesInfo.Defs[decl.Name].(*types.Func)
+	fn := pkg.Prog.FuncValue(obj)
+	param := fn.Params[1]
 
-	visited := map[*cfg.Block]bool{}
+	visited := map[*ssa.BasicBlock]bool{}
 	called := checkIdentityInBlock(
 		pass,
 		decl,
 		param,
-		graph.Blocks[0],
+		fn.Blocks[0],
 		visited,
 		0,
 	)
@@ -37,7 +39,7 @@ func checkIdentity(
 			pass,
 			decl,
 			"Configure() must call %s.Identity() exactly once",
-			param.Name,
+			param.Name(),
 		)
 	}
 }
@@ -50,9 +52,9 @@ func checkIdentity(
 func checkIdentityInBlock(
 	pass *analysis.Pass,
 	decl *ast.FuncDecl,
-	param *ast.Ident,
-	block *cfg.Block,
-	visited map[*cfg.Block]bool,
+	param *ssa.Parameter,
+	block *ssa.BasicBlock,
+	visited map[*ssa.BasicBlock]bool,
 	priorCalls int,
 ) (called bool) {
 	if called, ok := visited[block]; ok {
@@ -64,19 +66,16 @@ func checkIdentityInBlock(
 
 	var calls []*ast.CallExpr
 
-	for _, n := range block.Nodes {
-		ast.Inspect(n, func(n ast.Node) bool {
-			switch n := n.(type) {
-			case *ast.CallExpr:
-				if isConfigurerCall(param, n, "Identity") {
-					called = true
-					calls = append(calls, n)
-					checkIdentityCall(pass, n)
-				}
+	for _, i := range block.Instrs {
+		if call, ok := i.(*ssa.Call); ok {
+			if isConfigurerCall(param, call, "Identity") {
+				called = true
+				refs := *call.Referrers()
+				expr := refs[0].(*ssa.DebugRef).Expr.(*ast.CallExpr)
+				calls = append(calls, expr)
+				checkIdentityCall(pass, expr)
 			}
-
-			return true
-		})
+		}
 	}
 
 	if len(calls) > 0 {
@@ -87,7 +86,7 @@ func checkIdentityInBlock(
 				pass,
 				call,
 				"%s.Identity() must be called exactly once",
-				param.Name,
+				param.Name(),
 			)
 		}
 
@@ -98,7 +97,7 @@ func checkIdentityInBlock(
 				pass,
 				calls[0],
 				"%s.Identity() has already been called on at least one execution path",
-				param.Name,
+				param.Name(),
 			)
 		}
 	}
@@ -141,11 +140,15 @@ func checkIdentityInBlock(
 	)
 
 	if thenCalled != elseCalled {
-		report.AtLineOf(
+		cond := block.Instrs[len(block.Instrs)-1].(*ssa.If).Cond
+		refs := *cond.Referrers()
+		expr := refs[0].(*ssa.DebugRef).Expr
+
+		report.At(
 			pass,
-			block.Nodes[0],
+			expr,
 			"this control-flow statement causes %s.Identity() to remain uncalled on some execution paths",
-			param.Name,
+			param.Name(),
 		)
 	}
 
@@ -154,22 +157,18 @@ func checkIdentityInBlock(
 
 // isConfigureCall returns true if the given call expression is a call to a
 // specific method on a Dogma configurer.
-func isConfigurerCall(param *ast.Ident, call *ast.CallExpr, method string) bool {
-	sel, ok := astutil.Unparen(call.Fun).(*ast.SelectorExpr)
-	if !ok {
+func isConfigurerCall(
+	param *ssa.Parameter,
+	call *ssa.Call,
+	method string,
+) bool {
+	com := call.Common()
+
+	if com.Value != param {
 		return false
 	}
 
-	if sel.Sel.Name != method {
-		return false
-	}
-
-	ident, ok := astutil.Unparen(sel.X).(*ast.Ident)
-	if !ok {
-		return false
-	}
-
-	return ident.Obj == param.Obj
+	return com.Method.Name() == method
 }
 
 func checkIdentityCall(

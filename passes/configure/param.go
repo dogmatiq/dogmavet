@@ -9,14 +9,21 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const expectedParamName = "c"
+// preferredParamName is the preferred name for the configurer parameter to a
+// Configure() method.
+const preferredParamName = "c"
 
+// checkParam performs checks on the configurer parameter on a Configure()
+// method.
+//
+// It returns true if the parameter has a name.
 func checkParam(
 	pass *analysis.Pass,
 	decl *ast.FuncDecl,
-	param *ast.Field,
 ) bool {
-	if len(param.Names) != 1 {
+	param := decl.Type.Params.List[0]
+
+	if len(param.Names) == 0 {
 		report.AtWithFix(
 			pass,
 			param,
@@ -26,29 +33,29 @@ func checkParam(
 					{
 						Pos:     param.Type.Pos(),
 						End:     param.Type.Pos(),
-						NewText: []byte(expectedParamName + " "),
+						NewText: []byte(preferredParamName + " "),
 					},
 				},
 			},
 			`configurer parameter should be named '%s'`,
-			expectedParamName,
+			preferredParamName,
 		)
 
 		return false
 	}
 
 	ident := param.Names[0]
-	if ident.Name == expectedParamName {
+	if ident.Name == preferredParamName {
 		return true
 	}
 
 	fix := analysis.SuggestedFix{
-		Message: fmt.Sprintf("rename parameter to '%s'", expectedParamName),
+		Message: fmt.Sprintf("rename parameter to '%s'", preferredParamName),
 		TextEdits: []analysis.TextEdit{
 			{
 				Pos:     ident.NamePos,
 				End:     ident.NamePos + token.Pos(len(ident.Name)),
-				NewText: []byte(expectedParamName),
+				NewText: []byte(preferredParamName),
 			},
 		},
 	}
@@ -62,7 +69,7 @@ func checkParam(
 					analysis.TextEdit{
 						Pos:     n.NamePos,
 						End:     n.NamePos + token.Pos(len(n.Name)),
-						NewText: []byte(expectedParamName),
+						NewText: []byte(preferredParamName),
 					},
 				)
 			}
@@ -76,7 +83,7 @@ func checkParam(
 		param,
 		fix,
 		`configurer parameter should be named '%s'`,
-		expectedParamName,
+		preferredParamName,
 	)
 
 	return true
