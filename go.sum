@@ -7,8 +7,8 @@ github.com/dogmatiq/configkit v0.7.4 h1:iPNCdSZF121NsN0RQLujJ6Mb11gDrHWxVO9crTsA
 github.com/dogmatiq/configkit v0.7.4/go.mod h1:P1WVvhXiADAaLpGV9fZ6/35qDf5t3R95HZiDI/qI2fY=
 github.com/dogmatiq/dogma v0.6.3 h1:owkM3lOFmLmwaFpYogO46taVuPJU5sF5YApICZr4ljk=
 github.com/dogmatiq/dogma v0.6.3/go.mod h1:8TdjQ5jjV2DcCPb/jjHPgSrqU66H6092yMEIF5HGx0g=
-github.com/dogmatiq/dogma v0.8.0 h1:ijrlmCZGY6GcQ8Atfil6bXGIHEh/hRQoEnUoqfuZzts=
-github.com/dogmatiq/dogma v0.8.0/go.mod h1:8TdjQ5jjV2DcCPb/jjHPgSrqU66H6092yMEIF5HGx0g=
+github.com/dogmatiq/dogma v0.9.0 h1:PGRUqBPVI76HhkxulEEvzxe+693pq9cfQxJWBCpV730=
+github.com/dogmatiq/dogma v0.9.0/go.mod h1:8TdjQ5jjV2DcCPb/jjHPgSrqU66H6092yMEIF5HGx0g=
 github.com/dogmatiq/iago v0.4.0 h1:57nZqVT34IZxtCZEW/RFif7DNUEjMXgevfr/Mmd0N8I=
 github.com/dogmatiq/iago v0.4.0/go.mod h1:fishMWBtzYcjgis6d873VTv9kFm/wHYLOzOyO9ECBDc=
 github.com/dogmatiq/linger v0.2.1/go.mod h1:vQPEiGNtb3Qy+1IdmdSMyLxr4d9vPChknnQkClQimGM=
