@@ -234,7 +234,7 @@ func checkIdentityKey(
 						Pos: expr.Pos(),
 						End: expr.End(),
 						NewText: []byte(strconv.Quote(
-							uuid.New().String(),
+							uuid.NewString(),
 						)),
 					},
 				},
