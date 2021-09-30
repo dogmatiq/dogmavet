@@ -13,7 +13,7 @@ implementations.
 
 ## Installation
 
-    GO111MODULE=off go get -u github.com/dogmatiq/dogmavet/...
+    go install github.com/dogmatiq/dogmavet/...
 
 ### Visual Studio Code
 
