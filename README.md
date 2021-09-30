@@ -57,7 +57,4 @@ Please note that **all** of the following fixes will be applied:
 The `go vet` command does not allow more than one `-vettool` argument to be
 provided. Furthermore, setting `-vettool` disables all of the standard checks.
 
-As a workaround, `dogmavet` includes all of the standard checks along with the
-Dogma-specific ones.
-
 See also [vscode-go/issues#3219](https://github.com/microsoft/vscode-go/issues/3219).
