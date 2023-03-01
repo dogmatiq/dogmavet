@@ -44,6 +44,6 @@ func (nonUUIDKey) Configure(c dogma.ApplicationConfigurer) {
 func (alternateUUIDKey) Configure(c dogma.ApplicationConfigurer) {
 	c.Identity(
 		"name",
-		"{bc5c4138-9ead-4d17-a425-88d0e4cb3059}", // want `identity key UUIDs should use RFC-4122 hex notation \(xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\)`
+		"{bc5c4138-9ead-4d17-a425-88d0e4cb3059}", // want `identity key UUIDs should use RFC 4122 hex notation \(xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\)`
 	)
 }

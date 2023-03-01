@@ -262,7 +262,7 @@ func checkIdentityKey(
 					},
 				},
 			},
-			"identity key UUIDs should use RFC-4122 hex notation (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)",
+			"identity key UUIDs should use RFC 4122 hex notation (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)",
 		)
 	}
 }

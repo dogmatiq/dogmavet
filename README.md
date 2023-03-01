@@ -1,19 +1,21 @@
+<div align="center">
+
 # Dogma Vet Tool
 
-[![Build Status](https://github.com/dogmatiq/dogmavet/workflows/CI/badge.svg)](https://github.com/dogmatiq/dogmavet/actions?workflow=CI)
-[![Code Coverage](https://img.shields.io/codecov/c/github/dogmatiq/dogmavet/main.svg)](https://codecov.io/github/dogmatiq/dogmavet)
-[![Latest Version](https://img.shields.io/github/tag/dogmatiq/dogmavet.svg?label=semver)](https://semver.org)
-[![Documentation](https://img.shields.io/badge/go.dev-reference-007d9c)](https://pkg.go.dev/github.com/dogmatiq/dogmavet)
-[![Go Report Card](https://goreportcard.com/badge/github.com/dogmatiq/dogmavet)](https://goreportcard.com/report/github.com/dogmatiq/dogmavet)
+A custom Go [vet](https://golang.org/cmd/vet/) tool that checks for common
+mistakes in [Dogma](https://github.com/dogmatiq/dogma) applications.
 
-This repositoriy contains a custom Go [vet](https://golang.org/cmd/vet/) tool
-that implements checkers for common mistakes in
-[Dogma](https://github.com/dogmatiq/dogma) application and message handler
-implementations.
+[![Latest Version](https://img.shields.io/github/tag/dogmatiq/configkit.svg?&style=for-the-badge&label=semver)](https://github.com/dogmatiq/configkit/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/dogmatiq/configkit/ci.yml?style=for-the-badge&branch=main)](https://github.com/dogmatiq/configkit/actions/workflows/ci.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/dogmatiq/configkit/main.svg?style=for-the-badge)](https://codecov.io/github/dogmatiq/configkit)
+
+</div>
 
 ## Installation
 
-    go install github.com/dogmatiq/dogmavet/...
+```
+go install github.com/dogmatiq/dogmavet/cmd/dogmavet@latest
+```
 
 ### Visual Studio Code
 
@@ -33,12 +35,12 @@ The following checks are currently supported:
 
 - Ensures `Configure()` methods call `Identity()` exactly once
 - Ensures `Identity()` is called with valid names and keys
-- Ensures identity keys are UUIDs, formatted as per RFC-4122
+- Ensures identity keys are UUIDs, formatted as per RFC 4122
 
 ## Fixes
 
 The checkers are able to provide fixes to common problems, however it seems that
-`go vet` does not yet expose this information for consumptions by IDEs.
+`go vet` does not yet expose this information for consumption by IDEs.
 
 The fixers can be run manually using:
 
@@ -50,7 +52,7 @@ Please note that **all** of the following fixes will be applied:
 
 - Rename the configurer parameter name to `c`
 - Replace non-UUID identity keys with UUIDs
-- Reformat non-standard UUID representations by the RFC-4122 grammar
+- Reformat non-standard UUID representations using the RFC 4122 grammar
 
 ## Caveats
 
